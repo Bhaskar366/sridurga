@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>E-Commerce Landing</title>
+  <link rel="stylesheet" href="../CSS/home.css">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css  ">
+
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo"><a href="home.html"><img src="../img/company logo.png" alt=""></a></div>
+
+    <nav class="nav">
+      <a href="home.html">Home</a>
+      <a href="myorder.html">My orders</a>
+    </nav>
+
+    <div class="profile-area">
+      <div class="profile-dropdown">
+        <button id="profileBtn">
+          <span class="material-icons">person</span> Profile
+        </button>
+        <div class="profile-menu" id="profileMenu">
+          <a href="#">Settings</a>
+          <a href="#" class="logout">Logout</a>
+        </div>
+      </div>
+      <!-- Cart Icon -->
+      <div id="cartIconContainer" style="position: relative; display: inline-block; cursor: pointer;">
+        <span class="material-icons cart-icon" id="cartIcon">shopping_cart</span>
+        <span id="cartCount" style="
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: red;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 12px;
+      display: none;
+    ">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Search -->
+  <section class="search-section">
+    <input type="text" id="searchBar" placeholder="Search by Product ID, Name, or Mechanic..." />
+  </section>
+  <!-- tables -->
+  <div class="form-container">
+    <form id="productListForm">
+      <table>
+        <thead>
+          <tr>
+            <th>Product ID</th>
+            <th>Product Name</th>
+            <th>Mechanic Name</th>
+            <th>Description</th>
+            <th>Product Company</th>
+            <th>QTY</th>
+            <th>MRP</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="productTableBody">
+          <!-- Dynamic rows will appear here -->
+        </tbody>
+      </table>
+    </form>
+
+    <div class="pagination">
+      <button id="prevPageBtn">&laquo; Prev</button>
+      <span id="pageIndicator">Page 1</span>
+      <button id="nextPageBtn">Next &raquo;</button>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- Cart Popup -->
+  <div id="cartPopup" style="
+  display: none;
+  position: fixed;
+  right: 20px;
+  top: 70px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 15px;
+  z-index: 9999;
+">
+    <h3>Cart Items</h3>
+    <ul id="cartItemsList" style="list-style: none; padding: 0;"></ul>
+    <div style="margin-top: 15px; display: flex; justify-content: space-between; gap: 5px;">
+      <button onclick="checkoutCart()" style="flex: 1; background-color: green; color: white;">Checkout</button>
+      <button onclick="clearCart()" style="flex: 1; background-color: orange; color: white;">Clear</button>
+      <button onclick="closeCartPopup()" style="flex: 1; background-color: gray; color: white;">Close</button>
+    </div>
+  </div>
+
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="row text-center text-md-start">
+        <div class="col-md-4 mb-4 mb-md-0" style="margin-left: 10%;">
+          <h5 class="footer-brand">Sri Dugra Automobiles</h5>
+          <p>Spares & Automobiles</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0" style="margin-left: 45%; margin-top: -5%; margin-bottom: 3%;">
+          <h6 style="font-size: larger;  ">Quick Links</h6>
+          <ul class="list-unstyled">
+            <a href="./home.html">Home</a>
+            <div class="dropdown">
+              <button class="dropbtn" id="companiesBtn" style="color:rgb(232, 233, 231); background-color: #800000;">
+                Companies <span class="material-icons">expand_more</span>
+              </button>
+              <div class="dropdown-content" id="companiesMenu" style="  background-color: #800000;">
+                <a href="../src/PAGES/yamaha.html">Yamaha</a>
+                <a href="../src/PAGES/hero.html">Hero</a>
+                <a href="../src/PAGES/honda.html">Honda</a>
+                <a href="../src/PAGES/suzuki.html">Suzuki</a>
+                <a href="../src/PAGES/tvs.html">TVS</a>
+              </div>
+            </div>
+
+            <a href="#">Dashboard</a>
+        </div>
+      </div>
+      <div class="col-md-4" style="margin-left: 70%; margin-top: -12%; margin-bottom: 5%;">
+        <h6 style="font-size: larger;">Contact Us</h6>
+        <p>Email: <a href="mailto:support@sridurgaautomobiles.com">support@sridurgaautomobiles</a></p>
+        <p>Phone: +91 123-456-789-0</p>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+
+
+    <div class="col-md-4" style="margin-bottom: 3%;">
+      <h6 style="margin-left: 10%; font-size: larger;">Follow Us</h6>
+      <div class="social-icons" style="margin-left: 10%;">
+        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+        <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <div class="text-center copyright">
+        <p>&copy; 2025 Sri Durga Automobiles. All rights reserved.</p>
+      </div>
+    </div>
+    </div>
+
+  </footer>
+
+  <script src="../JS/home.js"></script>
+</body>
+
+</html>

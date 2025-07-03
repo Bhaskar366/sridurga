@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="../CSS/dailysale.css" />
+    <script src="../JS/dailysale.js" defer></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <a href="./dashboard.html"><span class="material-icons">groups</span><span
+                class="link-text">Investors</span></a>
+        <a href="./shipping.html"><span class="material-icons">local_shipping</span><span
+                class="link-text">Shipping</span></a>
+        <a href="./reorder.html"><span class="material-icons">inventory_2</span><span
+                class="link-text">Products</span></a>
+        <a href="./dailysale.html"><span class="material-icons">today</span><span class="link-text">Daily
+                Sale</span></a>
+        <a href="#"><span class="material-icons">calendar_month</span><span class="link-text">Monthly Sale</span></a>
+        <a href="#"><span class="material-icons">show_chart</span><span class="link-text">Profit Split</span></a>
+    </div>
+
+    <div class="header">
+        <div class="profile" onclick="toggleDropdown()">
+            <span class="material-icons profile-icon">account_circle</span>
+            <div class="dropdown" id="dropdown">
+                <a href="./home.html">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="content">
+        <div class="wapper">
+            <p
+                style="display: flex; align-items: center; gap: 8px; font-size: 30px; font-weight: 600; color: #800000; margin-bottom: 16px;">
+                <span class="material-icons">today</span><span class="link-text">Daily
+                    Sale</span>
+
+            </p>
+            <div class="scroll-container">
+                <div class="cards">
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info" id="dailySaleCard">
+                            <div class="card-title">Date: <span id="latestDate"></span></div>
+                            <div class="card-subtitle">Total Products: <span id="totalProducts"></span></div>
+                            <div class="card-value">₹<span id="totalSold"></span></div>
+                        </div>
+                    </div>
+
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info" id="monthlySaleCard">
+                            <div class="card-title" id="monthTitle">Month: -</div>
+                            <div class="card-subtitle">Total Products: <span id="monthlyProducts">0</span></div>
+                            <div class="card-value">₹<span id="monthlySales">0.00</span></div>
+                        </div>
+                    </div>
+
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info" id="todayProfitCard">
+                            <div class="card-title">Today Profit</div>
+                            <div class="card-subtitle">Net Profit</div>
+                            <div class="card-value">₹<span id="totalProfitToday">0.00</span></div>
+                        </div>
+                    </div>
+
+
+                    <div class="card daily-sale" >
+                        <div class="accent-bar"></div>
+                        <div class="card-info" id="monthlyProfitCard">
+                            <div class="card-title" id="monthLabel">Month</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">₹<span id="totalMonthlyProfit">0.00</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container-1">
+            <div class="wrapper">
+                <div class="scroll-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Mechanic Name</th>
+                                <th>Description</th>
+                                <th>Product Company</th>
+                                <th>Net Rate</th>
+                                <th>Qty</th>
+                                <th>Sold Price</th>
+                                <th>Profit (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="profitTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button id="prevBtn">&laquo; Prev</button>
+                <span id="pageInfo">Page: 1</span>
+                <button id="nextBtn">Next &raquo;</button>
+            </div>
+        </div>
+
+
+        </div>
+
+
+    </main>
+
+
+</body>
+
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="../CSS/dashboard.css" />
+  <script src="../JS/dashboard.js" defer></script>
+</head>
+
+<body>
+
+  <div class="sidebar">
+    <a href="./dashboard.html"><span class="material-icons">groups</span><span class="link-text">Investors</span></a>
+    <a href="./shipping.html"><span class="material-icons">local_shipping</span><span
+        class="link-text">Shipping</span></a>
+    <a href="./reorder.html"><span class="material-icons">inventory_2</span><span class="link-text">Products</span></a>
+    <a href="./dailysale.html"><span class="material-icons">today</span><span class="link-text">Daily Sale</span></a>
+    <a href="#"><span class="material-icons">calendar_month</span><span class="link-text">Monthly Sale</span></a>
+    <a href="./profitsplit.html"><span class="material-icons">show_chart</span><span class="link-text">Profit
+        Split</span></a>
+  </div>
+
+  <div class="header">
+    <div class="profile" onclick="toggleDropdown()">
+      <span class="material-icons profile-icon">account_circle</span>
+      <div class="dropdown" id="dropdown">
+        <a href="./home.html">Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="content">
+    <div class="wapper">
+      <p
+        style="display: flex; align-items: center; gap: 8px; font-size: 30px; font-weight: 600; color: #800000; margin-bottom: 16px;">
+        <span class="material-icons" style="font-size: 36px;">groups</span>
+        Investors
+      </p>
+      <div class="scroll-container">
+        <div class="cards">
+          <!-- Bhaskar Rao Card -->
+          <div class="card daily-sale" onclick="showBhaskarDetails()">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Bhaskar Rao</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value" id="bhaskarTotal">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale" onclick="shownarayanaDetails()">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Narayana Rao</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value" id="narayanaraototal">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale" onclick="showchandrashekharDetails()">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Chandra Shekhar</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value" id="chandrashekhartotal">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Naidu</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value" id="naidutotal">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Running Total</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value" id="runningTotal">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Balance Amount</div>
+              <div class="card-subtitle">ON Investment</div>
+              <div class="card-value" id="balanceAmount">₹0</div>
+            </div>
+          </div>
+
+          <div class="card daily-sale">
+            <div class="accent-bar"></div>
+            <div class="card-info">
+              <div class="card-title">Bhaskar Rao</div>
+              <div class="card-subtitle">Total Investment</div>
+              <div class="card-value">₹8,50,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-container">
+        <div class="wapper">
+          <form id="investmentForm">
+            <table>
+              <thead>
+                <tr>
+                  <th>Bhaskar Rao</th>
+                  <th>Narayana Rao</th>
+                  <th>Chandra Shekhar</th>
+                  <th>Naidu</th>
+                  <th>Total Investment</th>
+                  <th>Running Total</th>
+                  <th>Amount Used</th>
+                  <th>Balance Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="number" id="bhaskar" placeholder="₹" /></td>
+                  <td><input type="number" id="narayanarao" placeholder="₹" /></td>
+                  <td><input type="number" id="chandrashekhar" placeholder="₹" /></td>
+                  <td><input type="number" id="naidu" placeholder="₹" /></td>
+                  <td><input type="number" id="totalInvestment" readonly /></td>
+                  <td><input type="number" id="runningTotal" readonly /></td>
+                  <td><input type="number" id="amountUsed" placeholder="₹" /></td>
+                  <td><input type="number" id="balanceAmount" readonly /></td>
+                </tr>
+              </tbody>
+            </table>
+            <button type="submit" class="submit-button">Submit</button>
+          </form>              
+        </div>
+      </div>
+    </div>
+
+    <div class="form-container-1">
+      <div class="scroll-container">
+        <div class="wapper">
+          <table id="investorTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Bhaskar Rao</th>
+                <th>Narayana Rao</th>
+                <th>Chandra Shekhar</th>
+                <th>Naidu</th>
+                <th>Total Investment</th>
+                <th>Running Total</th>
+                <th>Amount Used</th>
+                <th>Balance Amount</th>
+              </tr>
+            </thead>
+            <tbody id="investorTableBody">
+              <!-- Data from database will be injected here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="pagination" id="paginationControls">
+        <button id="prevPageBtn">&laquo; Prev</button>
+        <span id="pageIndicator">Page 1</span>
+        <button id="nextPageBtn">Next &raquo;</button>
+      </div>
+
+    </div>
+
+
+  </main>
+  </div>
+
+  <!-- Modal for Investment Details -->
+  <div id="investmentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h3>Investment Details - <span id="investorName">Bhaskar Rao</span></h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="investmentTableBody"></tbody>
+      </table>
+      <div class="pagination-controls">
+        <button id="modalPrevPageBtn">« Prev</button>
+        <span id="modalPageIndicator">Page 1</span>
+        <button id="modalNextPageBtn">Next »</button>
+      </div>
+    </div>
+  </div>
+
+  <!--narayana popup-->
+  <div id="narayanainvestmentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-btn" onclick="narayanacloseModal()">&times;</span>
+      <h3>Investment Details - <span id="investorName">Narayana Rao</span></h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="narayanainvestmentTableBody"></tbody>
+      </table>
+      <div class="pagination-controls">
+        <button id="narayanaPrevPageBtn">« Prev</button>
+        <span id="narayanaPageIndicator">Page 1</span>
+        <button id="narayanaNextPageBtn">Next »</button>
+      </div>
+    </div>
+  </div>
+  <!--narayana popup-->
+
+  <!--chandrashekar popup-->
+  <div id="chandrashekarinvestmentModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-btn" onclick="chandrashekarcloseModal()">&times;</span>
+      <h3>Investment Details - <span id="investorName">ChandraShekar</span></h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody id="chandrashekarinvestmentTableBody"></tbody>
+      </table>
+      <div class="pagination-controls">
+        <button id="chandrashekarPrevPageBtn">« Prev</button>
+        <span id="chandrashekarPageIndicator">Page 1</span>
+        <button id="chandrashekarNextPageBtn">Next »</button>
+      </div>
+    </div>
+  </div>
+  <!--chandrashekar popup-->
+
+
+</body>
+
+</html>

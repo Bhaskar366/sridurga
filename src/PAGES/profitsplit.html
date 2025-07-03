@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="../CSS/profitsplit.css" />
+    <script src="../JS/profitsplit.js" defer></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <a href="./dashboard.html"><span class="material-icons">groups</span><span
+                class="link-text">Investors</span></a>
+        <a href="./shipping.html"><span class="material-icons">local_shipping</span><span
+                class="link-text">Shipping</span></a>
+        <a href="./reorder.html"><span class="material-icons">inventory_2</span><span
+                class="link-text">Products</span></a>
+        <a href="./dailysale.html"><span class="material-icons">today</span><span class="link-text">Daily
+                Sale</span></a>
+        <a href="#"><span class="material-icons">calendar_month</span><span class="link-text">Monthly Sale</span></a>
+        <a href="./profitsplit.html"><span class="material-icons">show_chart</span><span class="link-text">Profit
+                Split</span></a>
+    </div>
+
+    <div class="header">
+        <div class="profile" onclick="toggleDropdown()">
+            <span class="material-icons profile-icon">account_circle</span>
+            <div class="dropdown" id="dropdown">
+                <a href="./home.html">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="content">
+        <div class="wapper">
+            <p
+                style="display: flex; align-items: center; gap: 8px; font-size: 30px; font-weight: 600; color: #800000; margin-bottom: 16px;">
+                <span class="material-icons">show_chart</span><span class="link-text">Profit
+                    Split</span>
+            </p>
+            <div class="scroll-container">
+                <div class="cards">
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">yamaha</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">10</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">Hero</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">20</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">honda</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">30</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">bajaj</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">10</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">Suzuki</div>
+                            <div class="card-subtitle">Total Products</div>
+                            <div class="card-value">10</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">Balance Amount</div>
+                            <div class="card-subtitle">ON Investment</div>
+                            <div class="card-value">₹0</div>
+                        </div>
+                    </div>
+
+                    <div class="card daily-sale">
+                        <div class="accent-bar"></div>
+                        <div class="card-info">
+                            <div class="card-title">Bhaskar Rao</div>
+                            <div class="card-subtitle">Total Investment</div>
+                            <div class="card-value">₹8,50,000</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-container-1">
+            <div class="wrapper">
+                <div class="scroll-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Mechanic Name</th>
+                                <th>Supplier Name</th>
+                                <th>Description</th>
+                                <th>Product Company</th>
+                                <th>Net Rate</th>
+                                <th>QTY</th>
+                                <th>MRP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button>&laquo; Prev</button>
+                <span>Page 1</span>
+                <button>Next &raquo;</button>
+            </div>
+        </div>
+
+    </main>
+
+
+</body>
+
+</html>

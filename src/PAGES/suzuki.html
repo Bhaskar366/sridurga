@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-Commerce Landing</title>
+    <link rel="stylesheet" href="../CSS/yamaha.css">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo"><a href="../index.html" ><img src="../img/company logo.png" alt=""></a></div>
+
+        <nav class="nav">
+            <a href="../index.html">Home</a>
+            <div class="dropdown">
+                <button class="dropbtn" id="companiesBtn">
+                    Companies <span class="material-icons">expand_more</span>
+                </button>
+                <div class="dropdown-content" id="companiesMenu">
+                    <a href="../PAGES/yamaha.html">Yamaha</a>
+                    <a href="../PAGES/hero.html">Hero</a>
+                    <a href="../PAGES/honda.html">Honda</a>
+                    <a href="../PAGES/suzuki.html">Suzuki</a>
+                    <a href="../PAGES/tvs.html">TVS</a>
+                </div>
+            </div>
+
+            <a href="./home.html">Dashboard</a>
+            <a href="./myorder.html">My orders</a>
+        </nav>
+
+        <div class="profile-area">
+            <div class="profile-dropdown">
+                <button id="profileBtn">
+                    <span class="material-icons">person</span> Profile
+                </button>
+                <div class="profile-menu" id="profileMenu">
+                    <a href="#">Settings</a>
+                    <a href="#" class="logout">Logout</a>
+                </div>
+            </div>
+            <span class="material-icons cart-icon">shopping_cart</span>
+        </div>
+    </header>
+
+    <!-- Search -->
+    <section class="search-section">
+        <input type="text" id="searchBar" placeholder="Search products..." />
+    </section>
+    <section class="company-logo">
+      <img src="../img/suzuki.webp" alt=" image load failed">
+    </section>
+<!-- tables -->
+ <div class="form-container">
+          <form id="investmentForm">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Product name</th>
+                  <th>MRP</th>
+                  <th>Regular Name</th>
+                  <th>add to cart</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="material-icons cart-icon" style="color: #800000;">shopping_cart</span></td>
+                </tr>
+                                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="material-icons cart-icon" style="color: #800000;">shopping_cart</span></td>
+                </tr>
+                                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="material-icons cart-icon" style="color: #800000;">shopping_cart</span></td>
+                </tr>
+                                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="material-icons cart-icon" style="color: #800000;">shopping_cart</span></td>
+                </tr>
+                                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td><span class="material-icons cart-icon" style="color: #800000;">shopping_cart</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+          </form>
+                <div class="pagination" id="paginationControls">
+        <button id="prevPageBtn">&laquo; Prev</button>
+        <span id="pageIndicator">Page 1</span>
+        <button id="nextPageBtn">Next &raquo;</button>
+      </div>
+        </div>
+        
+      </div>
+
+  <footer class="site-footer">
+  <div class="container">
+    <div class="row text-center text-md-start">
+      <div class="col-md-4 mb-4 mb-md-0" style="margin-left: 10%;">
+        <h5 class="footer-brand">Sri Dugra Automobiles</h5>
+        <p>Spares & Automobiles</p>
+      </div>
+      <div class="col-md-4 mb-4 mb-md-0" style="margin-left: 45%; margin-top: -5%; margin-bottom: 3%;">
+        <h6 style="font-size: larger;  ">Quick Links</h6>
+        <ul class="list-unstyled">
+                 <a href="./home.html">Home</a>
+            <div class="dropdown">
+                <button class="dropbtn" id="companiesBtn" style="color:rgb(232, 233, 231); background-color: #800000;">
+                    Companies <span class="material-icons">expand_more</span>
+                </button>
+                <div class="dropdown-content" id="companiesMenu" style="  background-color: #800000;">
+                    <a href="../PAGES/yamaha.html">Yamaha</a>
+                    <a href="../PAGES/hero.html">Hero</a>
+                    <a href="../PAGES/honda.html">Honda</a>
+                    <a href="../PAGES/suzuki.html">Suzuki</a>
+                    <a href="../PAGES/tvs.html">TVS</a>
+                </div>
+            </div>
+
+            <a href="#">Dashboard</a>
+            </div>
+      </div>
+      <div class="col-md-4" style="margin-left: 70%; margin-top: -12%; margin-bottom: 5%;">
+        <h6 style="font-size: larger;">Contact Us</h6>
+        <p>Email: <a href="mailto:support@sridurgaautomobiles.com">support@sridurgaautomobiles</a></p>
+        <p>Phone: +91 123-456-789-0</p>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+    
+  
+  <div class="col-md-4" style="margin-bottom: 3%;">
+  <h6 style="margin-left: 10%; font-size: larger;">Follow Us</h6>
+  <div class="social-icons" style="margin-left: 10%;">
+    <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+    <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+    <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+    <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+  </div>
+  <div class="text-center copyright">
+      <p>&copy; 2025 Sri Durga Automobiles. All rights reserved.</p>
+  </div>
+</div>
+</div>
+
+</footer>
+
+    <script src="../JS/suzuki.js"></script>
+</body>
+
+</html>

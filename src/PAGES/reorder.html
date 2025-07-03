@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reorder</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" href="../CSS/reorder.css" />
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="../JS/reorder.js" defer></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <a href="./dashboard.html"><span class="material-icons">groups</span><span
+                class="link-text">Investors</span></a>
+        <a href="./shipping.html"><span class="material-icons">local_shipping</span><span
+                class="link-text">Shipping</span></a>
+        <a href="./reorder.html"><span class="material-icons">inventory_2</span><span
+                class="link-text">Products</span></a>
+        <a href="./dailysale.html"><span class="material-icons">today</span><span class="link-text">Daily
+                Sale</span></a>
+        <a href="#"><span class="material-icons">calendar_month</span><span class="link-text">Monthly Sale</span></a>
+        <a href="./profitsplit.html"><span class="material-icons">show_chart</span><span class="link-text">Profit
+                Split</span></a>
+    </div>
+
+    <div class="header">
+        <div class="profile" onclick="toggleDropdown()">
+            <span class="material-icons profile-icon">account_circle</span>
+            <div class="dropdown" id="dropdown">
+                <a href="./home.html">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="content">
+        <div class="wapper">
+            <p
+                style="display: flex; align-items: center; gap: 8px; font-size: 30px; font-weight: 600; color: #800000; margin-bottom: 16px;">
+                <span class="material-icons">inventory_2</span><span class="link-text">Products</span>
+
+            </p>
+
+        </div>
+
+        <div class="form-container-1">
+            <div class="header-flex">
+                <h2>Supplier Name:
+                    <select id="supplierSelect" onchange="loadReorderTable()">
+                        <!-- options will be populated here -->
+                    </select>
+                </h2>
+                <button onclick="exportToExcel()" class="export-button">Export to Excel</button>
+            </div>
+
+            <div class="wrapper">
+                <div class="scroll-container">
+                    <table id="reorderTable">
+                        <thead>
+                            <tr>
+                                <th>Product ID</th>
+                                <th>Product Name</th>
+                                <th>Product Company</th>
+                                <th>QTY</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pagination">
+                <button id="prevPageBtn">&laquo; Prev</button>
+                <span id="pageIndicator">Page 1</span>
+                <button id="nextPageBtn">Next &raquo;</button>
+            </div>
+        </div>
+
+
+    </main>
+
+
+</body>
+
+</html>

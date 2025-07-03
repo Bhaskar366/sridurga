@@ -1,0 +1,222 @@
+const db = require("../config/database");
+
+const myorder = {
+
+
+  getOrdersByDate: (req, res) => {
+    const { date } = req.query;
+    if (!date) return res.status(400).json({ error: "Missing date parameter" });
+
+    const ordersSql = `
+        SELECT DATE_FORMAT(orderdate, '%Y-%m-%d') AS orderdate,
+               productid, productname, mechanicname, description,
+               productcompany, qty, mrp, percentage,
+               percentageamount, soldprice AS grossamount
+        FROM myorder
+        WHERE DATE(orderdate) = ?
+    `;
+
+    const totalSql = `
+        SELECT SUM(soldprice) AS total
+        FROM myorder
+        WHERE DATE(orderdate) = ?
+    `;
+
+    db.query(ordersSql, [date], (err, orders) => {
+      if (err) {
+        console.error("Order fetch error:", err);
+        return res.status(500).json({ error: "Failed to fetch orders" });
+      }
+
+      db.query(totalSql, [date], (err2, totalResult) => {
+        if (err2) {
+          console.error("Total fetch error:", err2);
+          return res.status(500).json({ error: "Failed to fetch total" });
+        }
+
+        const total = totalResult[0]?.total || 0;
+        res.json({ date, orders, total });
+      });
+    });
+  },
+
+  //**delete from today orders */
+  deleteOrderByProductAndDate: (req, res) => {
+    const { productid, orderdate, deleteQty } = req.body;
+    if (!productid || !orderdate || !deleteQty) return res.status(400).json({ success: false, message: "Missing data" });
+
+    // First, get the current qty, mrp, percentage from myorder
+    const selectSql = `SELECT qty, mrp, percentage FROM myorder WHERE productid = ? AND DATE(orderdate) = ?`;
+    db.query(selectSql, [productid, orderdate], (err, results) => {
+      if (err) {
+        console.error("Error fetching order:", err);
+        return res.status(500).json({ success: false, message: "Failed to fetch order" });
+      }
+      if (results.length === 0) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+      }
+
+      const currentQty = results[0].qty;
+      const mrp = results[0].mrp;
+      const percentage = results[0].percentage || 0;
+
+      if (deleteQty > currentQty) {
+        return res.status(400).json({ success: false, message: "Delete quantity exceeds current quantity" });
+      }
+
+      // Calculate gross amount and sold price after deletion
+      const newQty = currentQty - deleteQty;
+      const grossAmount = mrp * newQty;
+      const newSoldPrice = grossAmount - (grossAmount * (percentage / 100));
+
+      // Update shipping table qty by adding deleted qty
+      const updateShippingSql = `UPDATE shipping SET qty = qty + ? WHERE productid = ?`;
+      db.query(updateShippingSql, [deleteQty, productid], (errShipping) => {
+        if (errShipping) {
+          console.error("Error updating shipping qty:", errShipping);
+          return res.status(500).json({ success: false, message: "Failed to update shipping qty" });
+        }
+
+        if (deleteQty === currentQty) {
+          // Delete entire order and dailyprofit entries
+          const deleteOrderSql = `DELETE FROM myorder WHERE productid = ? AND DATE(orderdate) = ?`;
+          const deleteProfitSql = `DELETE FROM dailyprofit WHERE productid = ? AND DATE(orderdate) = ?`;
+
+          db.query(deleteOrderSql, [productid, orderdate], (err1) => {
+            if (err1) {
+              console.error("Error deleting from myorder:", err1);
+              return res.status(500).json({ success: false, message: "Failed to delete from myorder" });
+            }
+
+            db.query(deleteProfitSql, [productid, orderdate], (err2) => {
+              if (err2) {
+                console.error("Error deleting from dailyprofit:", err2);
+                return res.status(500).json({ success: false, message: "Failed to delete from dailyprofit" });
+              }
+
+              return res.json({ success: true, message: "Deleted entire order" });
+            });
+          });
+        } else {
+        // Update myorder qty, soldprice, and percentageamount accordingly
+        const newPercentageAmount = grossAmount * (percentage / 100);
+
+        const updateOrderSql = `UPDATE myorder SET qty = ?, soldprice = ?, percentageamount = ? WHERE productid = ? AND DATE(orderdate) = ?`;
+        const updateProfitSql = `UPDATE dailyprofit SET qty = ?, soldprice = ? WHERE productid = ? AND DATE(orderdate) = ?`;
+
+        db.query(updateOrderSql, [newQty, newSoldPrice, newPercentageAmount, productid, orderdate], (err3) => {
+          if (err3) {
+            console.error("Error updating myorder:", err3);
+            return res.status(500).json({ success: false, message: "Failed to update myorder" });
+          }
+
+          db.query(updateProfitSql, [newQty, newSoldPrice, productid, orderdate], (err4) => {
+            if (err4) {
+              console.error("Error updating dailyprofit:", err4);
+              return res.status(500).json({ success: false, message: "Failed to update dailyprofit" });
+            }
+
+            // Calculate and update profit in dailyprofit
+            const selectProfitSql = `SELECT netrate, soldprice, qty FROM dailyprofit WHERE productid = ? AND DATE(orderdate) = ?`;
+            db.query(selectProfitSql, [productid, orderdate], (err5, profitResults) => {
+              if (err5) {
+                console.error("Error fetching dailyprofit for profit calculation:", err5);
+                return res.status(500).json({ success: false, message: "Failed to fetch dailyprofit for profit calculation" });
+              }
+              if (profitResults.length === 0) {
+                return res.status(404).json({ success: false, message: "Dailyprofit record not found for profit calculation" });
+              }
+
+              const netrate = profitResults[0].netrate;
+              const soldprice = profitResults[0].soldprice;
+              const qty = profitResults[0].qty;
+
+              const priceDiff = (soldprice / qty) - netrate;
+              
+              const profit = priceDiff * qty;
+
+              const updateProfitValueSql = `UPDATE dailyprofit SET profit = ? WHERE productid = ? AND DATE(orderdate) = ?`;
+              db.query(updateProfitValueSql, [profit, productid, orderdate], (err6) => {
+                if (err6) {
+                  console.error("Error updating profit in dailyprofit:", err6);
+                  return res.status(500).json({ success: false, message: "Failed to update profit in dailyprofit" });
+                }
+
+                return res.json({ success: true, message: "Deleted partial quantity and updated profit" });
+              });
+            });
+          });
+        });
+        }
+      });
+    });
+  },
+
+
+
+  getMonthsSummary: (req, res) => {
+    let offset = parseInt(req.query.offset);
+    let limit = parseInt(req.query.limit);
+
+    if (isNaN(offset) || offset < 0) offset = 0;
+    if (isNaN(limit) || limit <= 0) limit = 5;
+
+    const countSql = `SELECT COUNT(DISTINCT DATE_FORMAT(orderdate, '%Y-%m')) AS count FROM myorder`;
+    const summarySql = `
+    SELECT 
+      DATE_FORMAT(orderdate,'%Y-%m') AS monthStr,
+      YEAR(orderdate) AS year,
+      MONTHNAME(orderdate) AS monthName,
+      SUM(soldprice) AS total
+    FROM myorder
+    GROUP BY DATE_FORMAT(orderdate,'%Y-%m'), YEAR(orderdate), MONTHNAME(orderdate)
+    ORDER BY monthStr DESC
+    LIMIT ? OFFSET ?
+  `;
+
+
+    db.query(countSql, (err, countResult) => {
+      if (err) {
+        console.error("Count query error:", err);
+        return res.status(500).json({ error: err });
+      }
+
+      const totalCount = countResult[0]?.count || 0;
+
+      db.query(summarySql, [limit, offset], (err2, months) => {
+        if (err2) {
+          console.error("Summary query error:", err2);
+          return res.status(500).json({ error: err2 });
+        }
+
+        res.json({ months, totalCount });
+      });
+    });
+  },
+
+  getFullMonthOrders: (req, res) => {
+    const { month } = req.query;
+
+    const fullSql = `
+      SELECT 
+        DATE_FORMAT(orderdate,'%Y-%m-%d') AS orderdate,
+        productid, productname, mechanicname, description,
+        productcompany, qty, mrp, percentage,
+        percentageamount, soldprice
+      FROM myorder
+      WHERE DATE_FORMAT(orderdate,'%Y-%m') = ?
+      ORDER BY orderdate DESC`;
+
+    db.query(fullSql, [month], (err, orders) => {
+      if (err) {
+        console.error("Full month orders query error:", err);
+        return res.status(500).json({ error: err });
+      }
+      res.json({ orders });
+    });
+  },
+
+
+};
+
+module.exports = myorder;
