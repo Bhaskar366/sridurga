@@ -71,16 +71,17 @@ async function loadReorderTable(page = 1) {
     const tbody = document.querySelector("#reorderTable tbody");
     tbody.innerHTML = "";
 
-    pageData.forEach(item => {
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${item.productid}</td>
-        <td>${item.productname}</td>
-        <td>${item.productcompany}</td>
-        <td>${item.qty}</td>
-      `;
-      tbody.appendChild(row);
-    });
+pageData.forEach(item => {
+  const row = document.createElement("tr");
+  row.innerHTML = `
+    <td>${item.productid}</td>
+    <td>${item.productname}</td>
+    <td>${item.productcompany}</td>
+    <td>${item.qty}</td>
+    <td>${item.mrp}</td>
+  `;
+  tbody.appendChild(row);
+});
 
     document.getElementById("pageIndicator").textContent = `Page ${currentPage} of ${totalPages}`;
   } catch (err) {
@@ -110,12 +111,13 @@ async function exportToExcel() {
       return;
     }
 
-    const worksheetData = result.data.map(item => ({
-      "Product ID": item.productid,
-      "Product Name": item.productname,
-      "Product Company": item.productcompany,
-      "QTY": item.qty
-    }));
+const worksheetData = result.data.map(item => ({
+  "Product ID": item.productid,
+  "Product Name": item.productname,
+  "Product Company": item.productcompany,
+  "QTY": item.qty,
+  "MRP": item.mrp
+}));
 
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);
     const workbook = XLSX.utils.book_new();

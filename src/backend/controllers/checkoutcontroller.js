@@ -73,7 +73,7 @@ const checkout = {
                 // For dailyprofit table
                 dailyProfitValues.push([
                     today, item.productid, item.productname, item.mechanicname,
-                    item.description, item.productcompany, qty, sold,
+                    item.description, item.productcompany, qty, sold, mrp,
                     netrate, totalProfit
                 ]);
             });
@@ -92,7 +92,7 @@ const checkout = {
             const insertProfitQuery = `
                 INSERT INTO dailyprofit (
                     orderdate, productid, productname, mechanicname, description,
-                    productcompany, qty, soldprice, netrate, profit
+                    productcompany, qty, soldprice, netrate, mrp, profit
                 ) VALUES ?
             `;
 
@@ -107,10 +107,10 @@ const checkout = {
                 );
 
                 // Check new qty and fetch product details from shipping
-                const [updatedStock] = await db.promise().query(
-                    `SELECT productid, productname, suppliername, productcompany, qty FROM shipping WHERE productid = ?`,
-                    [item.productid]
-                );
+const [updatedStock] = await db.promise().query(
+    `SELECT productid, productname, suppliername, productcompany, qty, mrp FROM shipping WHERE productid = ?`,
+    [item.productid]
+);
 
                 const details = updatedStock[0];
                 const updatedQty = details?.qty || 0;
@@ -131,9 +131,9 @@ const checkout = {
                     } else {
                         // Insert new entry
                         await db.promise().query(
-                            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty)
-                             VALUES (?, ?, ?, ?, ?)`,
-                            [details.productid, details.productname, details.suppliername, details.productcompany, updatedQty]
+                            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp)
+                             VALUES (?, ?, ?, ?, ?, ?)`,
+                            [details.productid, details.productname, details.suppliername, details.productcompany, updatedQty, details.mrp]
                         );
                     }
                 } else {
@@ -157,6 +157,6 @@ const checkout = {
         }
     },
 
-};
+}
 
 module.exports = checkout;
