@@ -71,10 +71,10 @@ async function loadProducts(page, search) {
       row.innerHTML = `
         <td>${product.productid}</td>
         <td>${product.productname}</td>
-        <td>${product.mechanicname}</td>
-        <td>${product.description}</td>
+        <td contenteditable="true" class="editable mechanicname" data-productid="${product.productid}">${product.mechanicname}</td>
+        <td contenteditable="true" class="editable description" data-productid="${product.productid}">${product.description}</td>
         <td>${product.productcompany}</td>
-        <td>${product.qty}</td>
+        <td contenteditable="true" class="editable qty" data-productid="${product.productid}">${product.qty}</td>
         <td>${product.mrp}</td>
         <td>
           <button type="button" class="cart-button" onclick="addToCart('${product.productid}')">
@@ -85,7 +85,50 @@ async function loadProducts(page, search) {
       tbody.appendChild(row);
     });
 
-    document.getElementById("pageIndicator").textContent = `Page ${page}`;
+    // Add event listeners for inline editing
+    document.querySelectorAll('.editable').forEach(cell => {
+      cell.addEventListener('blur', async (event) => {
+        const target = event.target;
+        const productid = target.getAttribute('data-productid');
+        const field = target.classList.contains('mechanicname') ? 'mechanicname' :
+          target.classList.contains('description') ? 'description' :
+            target.classList.contains('qty') ? 'qty' : null;
+        if (!field) return;
+
+        let newValue = target.textContent;
+
+        if (field === 'qty') {
+          const parsedQty = parseInt(newValue, 10);
+          if (isNaN(parsedQty) || parsedQty < 0) {
+            alert('Quantity must be a non-negative integer.');
+            loadProducts(currentPage, searchQuery); // reload previous value
+            return;
+          }
+          newValue = parsedQty;
+        }
+
+        // Prepare update payload
+        const updateData = {};
+        updateData[field] = newValue;
+
+        try {
+          const response = await fetch('/api/shipping/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productid, ...updateData })
+          });
+          const result = await response.json();
+          if (!result.success) {
+            alert('Update failed: ' + (result.message || 'Unknown error'));
+            loadProducts(currentPage, searchQuery);
+          }
+        } catch (error) {
+          alert('Error updating product: ' + error.message);
+          loadProducts(currentPage, searchQuery);
+        }
+      });
+    });
+
   } catch (error) {
     console.error("Failed to load products:", error);
   }

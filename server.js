@@ -24,6 +24,8 @@ const authController = require("./src/backend/controllers/authController");
 const investorController = require("./src/backend/controllers/investorController");
 const shippingcontroller = require("./src/backend/controllers/shippingcontroller");
 const addcartcontroller = require("./src/backend/controllers/addcartcontroller");
+
+
 const checkoutcontroller = require("./src/backend/controllers/checkoutcontroller");
 const myordercontroller = require("./src/backend/controllers/myorderscontroller");
 const profitPerUnit = require("./src/backend/controllers/profitcontroller");
@@ -57,6 +59,7 @@ app.post("/api/products", shippingcontroller.addProduct);
 app.get("/data/products/:productid", shippingcontroller.getProductById);
 app.get("/get/products", shippingcontroller.getProductsPaginated);
 app.get("/api/get/productsdata", shippingcontroller.getProductsdata);
+app.post("/api/shipping/update", shippingcontroller.updateProduct);
 
 
 //**cehckout routes */ 

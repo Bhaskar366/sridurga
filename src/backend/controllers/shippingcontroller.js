@@ -190,6 +190,46 @@ const shippping = {
       res.json({ products: results });
     });
   },
+  updateProduct: async (req, res) => {
+    const { productid, mechanicname, description, qty } = req.body;
+
+    if (!productid) {
+      return res.status(400).json({ success: false, message: "Product ID is required" });
+    }
+
+    try {
+      // Fetch existing product data to preserve other fields
+      const [rows] = await db.promise().query(
+        "SELECT * FROM shipping WHERE productid = ?",
+        [productid]
+      );
+
+      if (rows.length === 0) {
+        return res.status(404).json({ success: false, message: "Product not found" });
+      }
+
+      const existingProduct = rows[0];
+
+      // Prepare updated values, fallback to existing if not provided
+      const updatedMechanicName = mechanicname !== undefined ? mechanicname : existingProduct.mechanicname;
+      const updatedDescription = description !== undefined ? description : existingProduct.description;
+      const updatedQty = qty !== undefined ? qty : existingProduct.qty;
+
+      // Update the shipping table with new values
+      const updateSql = `
+        UPDATE shipping
+        SET mechanicname = ?, description = ?, qty = ?
+        WHERE productid = ?
+      `;
+
+      await db.promise().query(updateSql, [updatedMechanicName, updatedDescription, updatedQty, productid]);
+
+      return res.json({ success: true, message: "Product updated successfully" });
+    } catch (error) {
+      console.error("Update product error:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  },
 };
 
 module.exports = shippping;
