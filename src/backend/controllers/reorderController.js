@@ -23,7 +23,7 @@ const reorderController = {
         }
 
         const sql = `
-          SELECT productid, productname, suppliername, productcompany, qty
+          SELECT productid, productname, suppliername, productcompany, qty, mrp
           FROM reorder
           WHERE suppliername = ?
         `;

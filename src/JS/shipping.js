@@ -11,14 +11,14 @@ document.addEventListener('click', function (e) {
 });
 //**apis start */
 
-//**inset the info to database */
+//**insert the info to database */
 // ✅ Blur event for autofill — placed outside the submit listener
 document.getElementById("productid").addEventListener("blur", async function () {
   const productid = this.value.trim();
   if (!productid) return;
 
   try {
-    const res = await fetch(`/data/products/${productid}`);
+    const res = await fetch(`/data/products/${encodeURIComponent(productid)}`);
     if (!res.ok) throw new Error("Product not found");
 
     const product = await res.json();
@@ -31,6 +31,10 @@ document.getElementById("productid").addEventListener("blur", async function () 
     document.getElementById("productcompany").value = product.productcompany || "";
     document.getElementById("netrate").value = product.netrate || "";
     document.getElementById("mrp").value = product.mrp || "";
+
+    // Clear any previous error message
+    const errorElem = document.getElementById("productidError");
+    if (errorElem) errorElem.textContent = "";
   } catch (err) {
     console.warn("No existing product found or fetch failed.");
     // Optional: clear other fields
@@ -41,6 +45,19 @@ document.getElementById("productid").addEventListener("blur", async function () 
     document.getElementById("productcompany").value = "";
     document.getElementById("netrate").value = "";
     document.getElementById("mrp").value = "";
+
+    // Show error message near productid input
+    let errorElem = document.getElementById("productidError");
+    if (!errorElem) {
+      errorElem = document.createElement("div");
+      errorElem.id = "productidError";
+      errorElem.style.color = "red";
+      errorElem.style.fontSize = "0.9em";
+      errorElem.textContent = "Product not found";
+      document.getElementById("productid").parentNode.appendChild(errorElem);
+    } else {
+      errorElem.textContent = "Product not found";
+    }
   }
 });
 
@@ -70,7 +87,11 @@ document.getElementById("productForm").addEventListener("submit", async function
     const result = await res.json();
     if (res.ok) {
       alert(result.message || "Product saved successfully!");
+      // Save scroll position before reload
+      sessionStorage.setItem('scrollPosition', window.scrollY);
       this.reset(); // clear form
+      // Reload the page
+      window.location.reload();
     } else {
       alert(result.error || "Submit failed.");
     }
@@ -80,9 +101,7 @@ document.getElementById("productForm").addEventListener("submit", async function
   }
 });
 
-//**inset the info to database */
-
-//**fetch the data altest 10 recodes */
+//**fetch the data latest 10 records */
 let currentPage = 1;
 const limit = 10;
 
@@ -100,7 +119,7 @@ async function fetchProducts(page) {
       <td>${row.productid}</td>
       <td>${row.productname}</td>
       <td>${row.mechanicname}</td>
-       <td>${row.suppliername}</td>
+      <td>${row.suppliername}</td>
       <td>${row.description}</td>
       <td>${row.productcompany}</td>
       <td>${row.netrate}</td>
@@ -125,6 +144,14 @@ document.getElementById("nextPageBtn").addEventListener("click", () => {
   fetchProducts(currentPage);
 });
 
+window.addEventListener('load', () => {
+  const scrollPosition = sessionStorage.getItem('scrollPosition');
+  if (scrollPosition) {
+    window.scrollTo(0, parseInt(scrollPosition));
+    sessionStorage.removeItem('scrollPosition');
+  }
+});
+
 // Initial fetch
 fetchProducts(currentPage);
-//**fetch the data altest 10 recodes */
+//**fetch the data latest 10 records */

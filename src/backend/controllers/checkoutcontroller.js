@@ -34,10 +34,9 @@ const checkout = {
         const today = new Date();
 
         try {
-            // Fetch netrates for all productids in one query
+            // Step 1: Fetch netrate for all productids
             const productIds = cart.map(item => item.productid);
             const placeholders = productIds.map(() => '?').join(',');
-
             const netrateQuery = `SELECT productid, netrate FROM shipping WHERE productid IN (${placeholders})`;
             const [netrateResults] = await db.promise().query(netrateQuery, productIds);
 
@@ -46,7 +45,7 @@ const checkout = {
                 netrateMap[row.productid] = parseFloat(row.netrate) || 0;
             });
 
-            // Prepare insert values for myorder and dailyprofit
+            // Step 2: Prepare data for inserts
             const myOrderValues = [];
             const dailyProfitValues = [];
 
@@ -63,100 +62,94 @@ const checkout = {
                 const profitPerUnit = unitSold - netrate;
                 const totalProfit = profitPerUnit * qty;
 
-                // For myorder table
+                // myorder insert
                 myOrderValues.push([
                     today, item.productid, item.productname, item.mechanicname,
                     item.description, item.productcompany, qty, mrp,
                     gross, percentage, percentAmt, sold
                 ]);
 
-                // For dailyprofit table
+                // dailyprofit insert
                 dailyProfitValues.push([
                     today, item.productid, item.productname, item.mechanicname,
-                    item.description, item.productcompany, qty, sold, mrp,
-                    netrate, totalProfit
+                    item.description, item.productcompany, qty, sold,
+                    netrate, mrp, totalProfit  // ✅ mrp before profit
                 ]);
             });
 
-            // Insert into myorder
-            const insertOrderQuery = `
+            // Step 3: Insert to myorder
+            await db.promise().query(`
                 INSERT INTO myorder (
                     orderdate, productid, productname, mechanicname, description,
                     productcompany, qty, mrp, grossamount, percentage, percentageamount, soldprice
-                ) VALUES ?
-            `;
+                ) VALUES ?`, [myOrderValues]);
 
-            await db.promise().query(insertOrderQuery, [myOrderValues]);
-
-            // Insert into dailyprofit
-            const insertProfitQuery = `
+            // Step 4: Insert to dailyprofit
+            await db.promise().query(`
                 INSERT INTO dailyprofit (
                     orderdate, productid, productname, mechanicname, description,
                     productcompany, qty, soldprice, netrate, mrp, profit
-                ) VALUES ?
-            `;
+                ) VALUES ?`, [dailyProfitValues]);
 
-            await db.promise().query(insertProfitQuery, [dailyProfitValues]);
-
-            // Update stock and check for reorder condition
+            // Step 5: Update stock and reorder
             for (const item of cart) {
-                // Update stock
                 await db.promise().query(
                     `UPDATE shipping SET qty = qty - ? WHERE productid = ?`,
                     [item.qty, item.productid]
                 );
 
-                // Check new qty and fetch product details from shipping
-const [updatedStock] = await db.promise().query(
-    `SELECT productid, productname, suppliername, productcompany, qty, mrp FROM shipping WHERE productid = ?`,
-    [item.productid]
-);
+                const [updatedStock] = await db.promise().query(
+                    `SELECT productid, productname, suppliername, productcompany, qty, mrp FROM shipping WHERE productid = ?`,
+                    [item.productid]
+                );
 
                 const details = updatedStock[0];
-                const updatedQty = details?.qty || 0;
+                const updatedQty = parseFloat(details?.qty) || 0;
+                const updatedMrp = parseFloat(details?.mrp) || 0;
 
                 if (updatedQty <= 5) {
-                    // Check if product exists in reorder table
                     const [existing] = await db.promise().query(
                         `SELECT qty FROM reorder WHERE productid = ?`,
                         [details.productid]
                     );
 
                     if (existing.length > 0) {
-                        // Update to reflect current stock exactly, no addition
                         await db.promise().query(
-                            `UPDATE reorder SET qty = ? WHERE productid = ?`,
-                            [updatedQty, details.productid]
+                            `UPDATE reorder SET qty = ?, mrp = ? WHERE productid = ?`,
+                            [updatedQty, updatedMrp, details.productid]
                         );
                     } else {
-                        // Insert new entry
                         await db.promise().query(
                             `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp)
                              VALUES (?, ?, ?, ?, ?, ?)`,
-                            [details.productid, details.productname, details.suppliername, details.productcompany, updatedQty, details.mrp]
+                            [
+                                details.productid,
+                                details.productname,
+                                details.suppliername,
+                                details.productcompany,
+                                updatedQty,
+                                updatedMrp
+                            ]
                         );
                     }
                 } else {
-                    // Delete if above 5
                     await db.promise().query(
                         `DELETE FROM reorder WHERE productid = ?`,
-                        [item.productid]
+                        [details.productid]
                     );
                 }
             }
 
-            // Step 5: Clear the cart
+            // Step 6: Clear the cart
             await db.promise().query(`TRUNCATE TABLE addcart`);
 
             return res.json({ success: true, message: "Order placed, stock updated, profit calculated, reorder managed." });
-
 
         } catch (err) {
             console.error("Order processing error:", err);
             return res.status(500).json({ success: false, message: "Order processing failed" });
         }
     },
-
 }
 
 module.exports = checkout;

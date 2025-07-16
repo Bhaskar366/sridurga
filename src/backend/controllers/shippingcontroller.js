@@ -3,7 +3,7 @@ const db = require("../config/database");
 
 const shippping = {
 
-  addProduct: (req, res) => {
+  addProduct: async (req, res) => {
     const {
       productid,
       productname,
@@ -15,11 +15,11 @@ const shippping = {
       qty,
       mrp,
     } = req.body;
-
+  
     if (!productid || !qty) {
       return res.status(400).json({ error: "Product ID and quantity are required" });
     }
-
+  
     const insertSql = `
       INSERT INTO shipping
         (entrydate, productid, productname, mechanicname, suppliername, description, productcompany, netrate, qty, mrp)
@@ -35,7 +35,7 @@ const shippping = {
         mrp = VALUES(mrp),
         entrydate = CURDATE()
     `;
-
+  
     const values = [
       productid,
       productname,
@@ -47,58 +47,70 @@ const shippping = {
       qty,
       mrp,
     ];
-
-    db.query(insertSql, values, (err, result) => {
-      if (err) {
-        console.error("Insert/Update Error:", err);
-        return res.status(500).json({ error: "Database operation failed" });
+  
+    try {
+      await db.promise().query(insertSql, values);
+  
+      // ✅ Always fetch full updated row after insertion
+      const [productRows] = await db.promise().query(
+        `SELECT productid, productname, suppliername, productcompany, qty, mrp FROM shipping WHERE productid = ?`,
+        [productid]
+      );
+  
+      const product = productRows[0];
+      if (!product) {
+        return res.status(500).json({ error: "Product not found after insertion" });
       }
-
-      // Fetch updated quantity
-      const checkQtySql = `SELECT qty FROM shipping WHERE productid = ?`;
-      db.query(checkQtySql, [productid], (err2, stockRes) => {
-        if (err2) {
-          console.error("Stock fetch error:", err2);
-          return res.status(500).json({ error: "Stock check failed" });
+  
+      const updatedQty = parseFloat(product.qty) || 0;
+      const updatedMrp = parseFloat(product.mrp);
+  
+      console.log(`📦 Product ${productid} has updated qty: ${updatedQty}, mrp: ${updatedMrp}`);
+  
+      if (updatedQty < 5) {
+        if (!updatedMrp || isNaN(updatedMrp)) {
+          console.error("❌ MRP is missing or invalid, cannot insert into reorder.");
+          return res.status(500).json({ error: "MRP missing, cannot insert into reorder" });
         }
-
-        const updatedQty = stockRes[0]?.qty || 0;
-        console.log(`✅ Updated qty for ${productid}: ${updatedQty}`);
-
-        if (updatedQty <= 5) {
-          // Handle reorder logic
-          const checkReorderSql = `SELECT * FROM reorder WHERE productid = ?`;
-          db.query(checkReorderSql, [productid], (err3, reorderRes) => {
-            if (err3) return res.status(500).json({ error: "Reorder lookup failed" });
-
-            if (reorderRes.length > 0) {
-              const updateReorderSql = `UPDATE reorder SET qty = ? WHERE productid = ?`;
-              db.query(updateReorderSql, [updatedQty, productid], (err4) => {
-                if (err4) return res.status(500).json({ error: "Reorder update failed" });
-                return res.json({ success: true, message: `Product updated & reorder updated.` });
-              });
-            } else {
-              const insertReorderSql = `
-                INSERT INTO reorder (productid, productname, suppliername, productcompany, qty)
-                VALUES (?, ?, ?, ?, ?)
-              `;
-              db.query(insertReorderSql, [productid, productname, suppliername, productcompany, updatedQty], (err5) => {
-                if (err5) return res.status(500).json({ error: "Reorder insert failed" });
-                return res.json({ success: true, message: `Product updated & reorder inserted.` });
-              });
-            }
-          });
+  
+        // Check reorder table
+        const [reorderRows] = await db.promise().query(
+          `SELECT * FROM reorder WHERE productid = ?`,
+          [productid]
+        );
+  
+        if (reorderRows.length > 0) {
+          // Update existing reorder record
+          await db.promise().query(
+            `UPDATE reorder SET qty = ?, mrp = ? WHERE productid = ?`,
+            [updatedQty, updatedMrp, productid]
+          );
+          return res.json({ success: true, message: "Product updated & reorder record updated." });
         } else {
-          // Remove from reorder table if needed
-          const deleteReorderSql = `DELETE FROM reorder WHERE productid = ?`;
-          db.query(deleteReorderSql, [productid], (err6) => {
-            if (err6) return res.status(500).json({ error: "Reorder delete failed" });
-            return res.json({ success: true, message: `Product updated & removed from reorder (if existed).` });
-          });
+          // Insert new reorder record
+          await db.promise().query(
+            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [product.productid, product.productname, product.suppliername, product.productcompany, updatedQty, updatedMrp]
+          );
+          return res.json({ success: true, message: "Product updated & reorder record inserted." });
         }
-      });
-    });
-  },
+      } else if (updatedQty > 5) {
+        // ✅ If qty > 5 → remove from reorder
+        await db.promise().query(
+          `DELETE FROM reorder WHERE productid = ?`,
+          [productid]
+        );
+        return res.json({ success: true, message: "Product updated & removed from reorder if existed." });
+      } else {
+        // qty == 5, no reorder action
+        return res.json({ success: true, message: "Product updated, no reorder action for qty 5." });
+      }
+    } catch (err) {
+      console.error("Insert/Update Error:", err);
+      return res.status(500).json({ error: "Database operation failed" });
+    }
+  },    
 
   getProductById: (req, res) => {
     const { productid } = req.params;

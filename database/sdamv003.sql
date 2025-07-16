@@ -1,0 +1,277 @@
+-- MySQL dump 10.13  Distrib 8.0.39, for Win64 (x86_64)
+--
+-- Host: localhost    Database: sridurga
+-- ------------------------------------------------------
+-- Server version	8.0.39
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `addcart`
+--
+
+DROP TABLE IF EXISTS `addcart`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `addcart` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `productid` varchar(100) NOT NULL,
+  `productname` varchar(255) NOT NULL,
+  `mechanicname` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `productcompany` varchar(105) NOT NULL,
+  `qty` int NOT NULL,
+  `mrp` int NOT NULL,
+  `netrate` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_cart_product_mrp` (`productid`,`mrp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `addcart`
+--
+
+LOCK TABLES `addcart` WRITE;
+/*!40000 ALTER TABLE `addcart` DISABLE KEYS */;
+/*!40000 ALTER TABLE `addcart` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `adminusers`
+--
+
+DROP TABLE IF EXISTS `adminusers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `adminusers` (
+  `idadminusers` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `fullname` varchar(100) NOT NULL,
+  PRIMARY KEY (`idadminusers`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `adminusers`
+--
+
+LOCK TABLES `adminusers` WRITE;
+/*!40000 ALTER TABLE `adminusers` DISABLE KEYS */;
+INSERT INTO `adminusers` VALUES (1,'Sri Durga Automobiles','$2b$10$3SDELypAoLk0NfHeavim8esrwgiVxi7PPPW42eJUBgKCtnWAbdGBi','BHASKARRAO');
+/*!40000 ALTER TABLE `adminusers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `dailyprofit`
+--
+
+DROP TABLE IF EXISTS `dailyprofit`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `dailyprofit` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orderdate` date DEFAULT NULL,
+  `productid` varchar(50) DEFAULT NULL,
+  `productname` varchar(100) DEFAULT NULL,
+  `mechanicname` varchar(100) DEFAULT NULL,
+  `description` text,
+  `productcompany` varchar(100) DEFAULT NULL,
+  `qty` decimal(10,2) DEFAULT NULL,
+  `soldprice` decimal(10,2) DEFAULT NULL,
+  `netrate` decimal(10,2) DEFAULT NULL,
+  `profit` decimal(10,2) DEFAULT NULL,
+  `mrp` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `dailyprofit`
+--
+
+LOCK TABLES `dailyprofit` WRITE;
+/*!40000 ALTER TABLE `dailyprofit` DISABLE KEYS */;
+/*!40000 ALTER TABLE `dailyprofit` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `investors`
+--
+
+DROP TABLE IF EXISTS `investors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `investors` (
+  `idinvestors` int NOT NULL AUTO_INCREMENT,
+  `investmentdate` date NOT NULL,
+  `bhaskar` int NOT NULL,
+  `narayanarao` int NOT NULL,
+  `chandrashekhar` int NOT NULL,
+  `naidu` int NOT NULL,
+  `totalinvestment` int NOT NULL,
+  `runningtotal` int NOT NULL,
+  `amountused` int NOT NULL,
+  `balanceamount` int NOT NULL,
+  PRIMARY KEY (`idinvestors`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `investors`
+--
+
+LOCK TABLES `investors` WRITE;
+/*!40000 ALTER TABLE `investors` DISABLE KEYS */;
+/*!40000 ALTER TABLE `investors` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `myorder`
+--
+
+DROP TABLE IF EXISTS `myorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `myorder` (
+  `idmyorder` int NOT NULL AUTO_INCREMENT,
+  `orderdate` date NOT NULL,
+  `productid` varchar(100) NOT NULL,
+  `productname` varchar(255) NOT NULL,
+  `mechanicname` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `productcompany` varchar(100) NOT NULL,
+  `qty` int NOT NULL,
+  `mrp` int NOT NULL,
+  `grossamount` int NOT NULL,
+  `percentage` int NOT NULL,
+  `percentageamount` int NOT NULL,
+  `soldprice` int NOT NULL,
+  PRIMARY KEY (`idmyorder`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `myorder`
+--
+
+LOCK TABLES `myorder` WRITE;
+/*!40000 ALTER TABLE `myorder` DISABLE KEYS */;
+/*!40000 ALTER TABLE `myorder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `reorder`
+--
+
+DROP TABLE IF EXISTS `reorder`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `reorder` (
+  `idreorder` int NOT NULL AUTO_INCREMENT,
+  `productid` varchar(100) NOT NULL,
+  `productname` varchar(255) NOT NULL,
+  `suppliername` varchar(255) NOT NULL,
+  `productcompany` varchar(255) NOT NULL,
+  `qty` int NOT NULL,
+  `mrp` int NOT NULL,
+  PRIMARY KEY (`idreorder`),
+  UNIQUE KEY `productid` (`productid`,`mrp`),
+  UNIQUE KEY `productid_2` (`productid`,`mrp`),
+  KEY `idx_product_mrp` (`productid`,`mrp`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `reorder`
+--
+
+LOCK TABLES `reorder` WRITE;
+/*!40000 ALTER TABLE `reorder` DISABLE KEYS */;
+INSERT INTO `reorder` VALUES (1,'35010K0VA01','KEY SET','WIN MOTORS','HONDA',1,1232),(4,'02380K43D00','CHAIN SPROCKET KIT','WIN MOTORS','HONDA',2,1413),(5,'23224KWPD00','FACE SET MOVEABLE DRIVE','WIN MOTORS','HONDA',1,920),(6,'23205KWP900S','FACE SET DRIVEN','WIN MOTORS','HONDA',1,1372),(8,'17211k14901','AIR FILTER K14, K23','WIN MOTORS','HONDA',4,146),(10,'81131K32770ZA','COVER INNER TYPE 1','WIN MOTORS','HONDA',1,420),(11,'ASK/T/TC/96','THROTTLE CABLE','SRI RAO AUTO AGENCIES','ASK',5,274),(12,'ASK/T/FBC/96','FRONT BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,145),(13,'ASK/H/SCA/121','SPEEDOMETER CABLE','SRI RAO AUTO AGENCIES','ASK',5,143),(14,'590273/A','SPEEDOMETER CABLE COMPLETE','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',2,160),(15,'ASK/HM/SC/06','SPEEDOMETER CABLE','SRI RAO AUTO AGENCIES','ASK',5,123),(16,'ASK/S/FBC/181','FRONT BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,178),(17,'ASK/Y/TC1/165','THROTTLE CABLE','SRI RAO AUTO AGENCIES','ASK',5,333),(18,'ASK/T/RB/98','REAR BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,353),(19,'ASK/H/SC/122','SPEEDOMETER CABLE','SRI RAO AUTO AGENCIES','ASK',5,135),(20,'ASK/S/RB/181','REAR BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,230),(21,'17920KZN305S','CABBLE THROT','SRI RAO AUTO AGENCIES','HERO',4,285),(22,'ASK/T/FBC/103','FRONT BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,166),(23,'ASK/T/RB/96','REAR BRAKE CABLE','SRI RAO AUTO AGENCIES','ASK',5,239),(24,'1040741/A','SPEEDO DRIVE ASSY','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',3,230),(25,'888337','BREAKE SHOE KIT WITH SPRING','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',1,350);
+/*!40000 ALTER TABLE `reorder` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `shipping`
+--
+
+DROP TABLE IF EXISTS `shipping`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `shipping` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `entrydate` date NOT NULL,
+  `productid` varchar(100) NOT NULL,
+  `productname` varchar(255) NOT NULL,
+  `mechanicname` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `suppliername` varchar(255) NOT NULL,
+  `productcompany` varchar(100) NOT NULL,
+  `netrate` decimal(10,2) NOT NULL,
+  `qty` int NOT NULL,
+  `mrp` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_product_mrp` (`productid`,`mrp`),
+  UNIQUE KEY `productid_UNIQUE` (`productid`)
+) ENGINE=InnoDB AUTO_INCREMENT=48 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `shipping`
+--
+
+LOCK TABLES `shipping` WRITE;
+/*!40000 ALTER TABLE `shipping` DISABLE KEYS */;
+INSERT INTO `shipping` VALUES (1,'2025-07-14','02380K43D00','CHAIN SPROCKET KIT','HORNET CHAIN KIT','CHAIN KIT','WIN MOTORS','HONDA',1243.44,2,1413.00),(2,'2025-07-14','81131KWP900ZA','BIG INNER COVER','BIG INNNER COVER','ACTIVA 110','WIN MOTORS','HONDA',606.32,2,689.00),(3,'2025-07-14','81131K32770ZA','COVER INNER TYPE 1','ACTIVA I','ACTIVA I','WIN MOTORS','HONDA',369.60,1,420.00),(4,'2025-07-14','17220KOND00','ELEMENT COMP, AIR/C','AIR FILTER','SHINE BS6','WIN MOTORS','HONDA',141.68,5,161.00),(5,'2025-07-14','17211k14901','AIR FILTER K14, K23','AIR FILTER','DREAM YOGA','WIN MOTORS','HONDA',128.48,4,146.00),(6,'2025-07-14','35010K0VA01','KEY SET','LOCK SET','SHINE BS6, SP 125','WIN MOTORS','HONDA',1084.16,1,1232.00),(7,'2025-07-14','17920K0LD01','CLAMP COMP B, THROTTLE','ACC B THROTTLE','ACTIVA BS6','WIN MOTORS','HONDA',244.64,5,278.00),(9,'2025-07-14','17910K0LD01','CLAMP COMP A, THROTTLE','ACC A THROTTLE','ACTIVA BS6','WIN MOTORS','HONDA',244.00,5,275.00),(10,'2025-07-14','11230KPL900','CLAMPPER COMP, RR B','ACTIVA CENTER STAND CLAMP','ACTIVA','WIN MOTORS','HONDA',35.20,10,40.00),(11,'2025-07-14','17910kKOL601','CABLE COMP A THROTTLE','ACC A THROTTLE','ACTIVA BS6','WIN MOTORS','HONDA',233.10,10,259.00),(12,'2025-07-14','23224KWPD00','FACE SET MOVEABLE DRIVE','PULLY SET','ACTIVA 3G','WIN MOTORS','HONDA',809.60,1,920.00),(13,'2025-07-14','23205KWP900S','FACE SET DRIVEN','PULLY SET','ACTIVA 3G','WIN MOTORS','HONDA',1207.36,1,1372.00),(14,'2025-07-15','ASK/T/TC/96','THROTTLE CABLE','ACC CABLE','PUL','SRI RAO AUTO AGENCIES','ASK',150.70,5,274.00),(15,'2025-07-15','ASK/T/FBC/96','FRONT BRAKE CABLE','FB CABLE','PUL','SRI RAO AUTO AGENCIES','ASK',79.75,5,145.00),(16,'2025-07-15','ASK/H/SCA/121','SPEEDOMETER CABLE','SM CABLE','UNICORN','SRI RAO AUTO AGENCIES','ASK',78.65,5,143.00),(17,'2025-07-15','590273/A','SPEEDOMETER CABLE COMPLETE','SM CABLE','RE CLASSIC 350','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',128.00,2,160.00),(18,'2025-07-15','ASK/HM/SC/06','SPEEDOMETER CABLE','SM CABLE','XTREEM, XTREEM HNK','SRI RAO AUTO AGENCIES','ASK',67.65,5,123.00),(19,'2025-07-15','ASK/HM/SC/17','SPEEDOMETER CABLE','ACC CABLE','MASTRO','SRI RAO AUTO AGENCIES','ASK',62.15,10,113.00),(20,'2025-07-15','ASK/S/FBC/181','FRONT BRAKE CABLE','FB CABLE','SUZKI ACESS','SRI RAO AUTO AGENCIES','ASK',97.90,5,178.00),(21,'2025-07-15','ASK/Y/TC1/165','THROTTLE CABLE','ACC CABLE','FASCINO','SRI RAO AUTO AGENCIES','ASK',183.15,5,333.00),(22,'2025-07-15','ASK/T/RB/98','REAR BRAKE CABLE','REAR  BRAKE CABLE','JUPITER','SRI RAO AUTO AGENCIES','ASK',194.15,5,353.00),(23,'2025-07-15','ASK/H/SC/122','SPEEDOMETER CABLE','SM CABLE','SHINE','SRI RAO AUTO AGENCIES','ASK',74.25,5,135.00),(24,'2025-07-15','ASK/S/RB/181','REAR BRAKE CABLE','REAR  BRAKE CABLE','SUZKI ACESS','SRI RAO AUTO AGENCIES','ASK',126.50,5,230.00),(25,'2025-07-15','17920KZN305S','CABBLE THROT','ACC CABLE','MASTRO, ACTIVA','SRI RAO AUTO AGENCIES','HERO',239.40,4,285.00),(26,'2025-07-15','ASK/T/FBC/103','FRONT BRAKE CABLE','TVS XL RH F/B CABLE','TVS XL','SRI RAO AUTO AGENCIES','ASK',91.30,5,166.00),(27,'2025-07-15','ASK/T/RB/96','REAR BRAKE CABLE','REAR  BRAKE CABLE','PUL','SRI RAO AUTO AGENCIES','ASK',131.45,5,239.00),(28,'2025-07-15','1040741/A','SPEEDO DRIVE ASSY','SPEEDO METER VARAM','BULLET CLASSIC 350','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',190.80,1,230.00),(30,'2025-07-15','888337','BREAKE SHOE KIT WITH SPRING','BACK BRAKE SHOES','RE CLASSIC 350','SRI RAO AUTO AGENCIES','ROYLE ENFEILD',280.00,1,350.00),(31,'2025-07-15','SG PUL-006','CLUTCH COVER GASKET PULSAR','CLUTCH PACKING','PUL','SRI RAO AUTO AGENCIES','SIEMEN',35.34,10,57.00),(32,'2025-07-16','F002 G40 329','BO-PLUG HONDA','SMALL PLUG','ALL BIKES','KARTHIK AGENCIES','BOSCH',62.00,31,112.00),(33,'2025-07-16','F002 G40 533','BO-PLUG PULSAR','BIG PLUG','ALL BIKES','KARTHIK AGENCIES','BOSCH',67.00,15,114.00),(34,'2025-07-16','T10','GEN-SM BLUB','PARKING BULB','ALL BIKES','KARTHIK AGENCIES','General',4.00,96,10.00),(35,'2025-07-16','MIN-2010','UM-D L BULB UNIV','DANGER LIGHT BULB','ALL SCOOTIES','KARTHIK AGENCIES','MINDA GLASS',11.05,20,17.00),(36,'2025-07-16','TS WEDGE BASE','PH-T5 SM BLUB 12V1.','SPEEDOMETER BLUB 12V1.','ALL BIKES','KARTHIK AGENCIES','PHOENIX',6.00,20,10.00),(37,'2025-07-16','SGI-HHS0011001','SGI- FULL KIT HH','ENGINE PACKING KIT','HERO HONDA','KARTHIK AGENCIES','SGI',136.80,10,228.00),(38,'2025-07-16','HA475','SB-SUSP BUSH ACT','BEDDING BUSH ACT','ACTIVA, MASTRO','KARTHIK AGENCIES','STEELBIRD',50.84,10,82.00),(39,'2025-07-16','2010','SUPER-10AMP GLASS FULSE','10AMP TUBE FULSE','ALL BIKES','KARTHIK AGENCIES','SUPER',4.00,50,10.00),(40,'2025-07-16','2011','SUPER-15AMP GLASS FULSE','15AMP TUBE FULSE','GENERAL','KARTHIK AGENCIES','SUPER',4.00,50,10.00),(41,'2025-07-16','ACT305A','VD-HUB COVER SET (S','HUB CAP','ACTIVA 110','KARTHIK AGENCIES','VHPL',26.66,12,43.00),(42,'2025-07-16','SGI-STR0033003','SGI-CLU PAKIN S CIT','CLUTCH PACKING','STAR CITY/ TVS ES','KARTHIK AGENCIES','SGI',24.00,10,40.00),(43,'2025-07-16','SPX-1981','SPX-CLU PAKIN FZ','CLUTCH COVER PACKING','FZ','KARTHIK AGENCIES','SPX',36.40,10,70.00),(44,'2025-07-16','SPX-1291','CLUTCH PKG','CLUTCH COVER PACKING','SUPER XL H.D','KARTHIK AGENCIES','SPX',23.40,10,45.00),(45,'2025-07-16','ACT LADY F/REST','GEN-LADY F/REST','GEN-LADY REST','ACTIVA','KARTHIK AGENCIES','General',340.00,3,602.00),(46,'2025-07-16','SP-HN-01','PIX-SLIDE PIECE SET','PIX-SLIDE PIECE SET','ACTIVA','KARTHIK AGENCIES','PIX',28.00,10,42.00),(47,'2025-07-16','26261568','LUCAS-SELF MOTOR AC','LUCAS-SELF MOTOR AC','ACTIVA 3G','KARTHIK AGENCIES','LUCAS TVS',948.00,3,1264.00);
+/*!40000 ALTER TABLE `shipping` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `idusers` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `fullname` varchar(145) NOT NULL,
+  PRIMARY KEY (`idusers`),
+  UNIQUE KEY `username_UNIQUE` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `users`
+--
+
+LOCK TABLES `users` WRITE;
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+INSERT INTO `users` VALUES (1,'Sri Durga Automobiles','$2b$10$3SDELypAoLk0NfHeavim8esrwgiVxi7PPPW42eJUBgKCtnWAbdGBi','Bhaskar Rao');
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2025-07-16 16:41:36
