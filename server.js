@@ -18,6 +18,10 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "src")));
 
 const PORT = process.env.PORT || 5000;
+// Start server
+app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}/`);
+});
 
 // Import controllers
 const authController = require("./src/backend/controllers/authController");
@@ -94,7 +98,4 @@ app.get("/api/reorder", reorderController.getReorderBySupplier);
 
 
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}/`);
-});
+
