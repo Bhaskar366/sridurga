@@ -59,7 +59,7 @@ const addToCart = {
 
     processNext();
   },
-
+ 
   getCart: (req, res) => {
     db.query("SELECT * FROM addcart", (err, results) => {
       if (err) return res.status(500).json({ success: false, message: "Failed to fetch cart" });
