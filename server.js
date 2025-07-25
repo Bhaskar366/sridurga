@@ -28,12 +28,12 @@ const authController = require("./src/backend/controllers/authController");
 const investorController = require("./src/backend/controllers/investorController");
 const shippingcontroller = require("./src/backend/controllers/shippingcontroller");
 const addcartcontroller = require("./src/backend/controllers/addcartcontroller");
-
-
 const checkoutcontroller = require("./src/backend/controllers/checkoutcontroller");
 const myordercontroller = require("./src/backend/controllers/myorderscontroller");
 const profitPerUnit = require("./src/backend/controllers/profitcontroller");
 const reorderController = require("./src/backend/controllers/reorderController");
+const purchasecontroller = require("./src/backend/controllers/purchasecontroller");
+
 
 const { pathToFileURL } = require('url');
 
@@ -95,6 +95,9 @@ app.get("/api/reorder/supplier-names", reorderController.getSupplierNames);
 app.get("/api/reorder", reorderController.getReorderBySupplier);
 
 
+//**purchase routes */
+app.post("/add-purchase", purchasecontroller.addPurchase);
+app.get("/get-purchases", purchasecontroller.getPurchases);
 
 
 
