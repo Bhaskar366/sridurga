@@ -76,9 +76,9 @@ async function loadReorderTable(page = 1) {
       row.innerHTML = `
         <td>${item.productid}</td>
         <td>${item.productname}</td>
-        <td>${item.productcompany}</td>
         <td>${item.mechanicname}</td>
         <td>${item.description}</td>
+        <td>${item.productcompany}</td>
         <td>${item.qty}</td>
         <td>${item.mrp}</td>
       `;
