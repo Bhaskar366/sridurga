@@ -120,17 +120,20 @@ const checkout = {
                         );
                     } else {
                         await db.promise().query(
-                            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp)
-                             VALUES (?, ?, ?, ?, ?, ?)`,
+                            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp, mechanicname, description)
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
                             [
                                 details.productid,
                                 details.productname,
                                 details.suppliername,
                                 details.productcompany,
                                 updatedQty,
-                                updatedMrp
+                                updatedMrp,
+                                details.mechanicname,
+                                details.description
                             ]
                         );
+
                     }
                 } else {
                     await db.promise().query(

@@ -45,44 +45,44 @@ const myorder = {
     const { productid, orderdate, deleteQty } = req.body;
     if (!productid || !orderdate || !deleteQty)
       return res.status(400).json({ success: false, message: "Missing data" });
-  
+
     const selectSql = `SELECT qty, mrp, percentage FROM myorder WHERE productid = ? AND DATE(orderdate) = ?`;
     db.query(selectSql, [productid, orderdate], (err, results) => {
       if (err) return res.status(500).json({ success: false, message: "Fetch error" });
       if (results.length === 0)
         return res.status(404).json({ success: false, message: "Order not found" });
-  
+
       const currentQty = results[0].qty;
       const mrp = results[0].mrp;
       const percentage = results[0].percentage || 0;
-  
+
       if (deleteQty > currentQty)
         return res.status(400).json({ success: false, message: "Delete quantity exceeds current quantity" });
-  
+
       const newQty = currentQty - deleteQty;
       const grossAmount = mrp * newQty;
       const newSoldPrice = grossAmount - (grossAmount * (percentage / 100));
-  
+
       const updateShippingSql = `UPDATE shipping SET qty = qty + ? WHERE productid = ?`;
       db.query(updateShippingSql, [deleteQty, productid], (errShipping) => {
         if (errShipping)
           return res.status(500).json({ success: false, message: "Failed to update shipping qty" });
-  
-        const checkShippingSql = `SELECT productid, productname, suppliername, productcompany, qty FROM shipping WHERE productid = ?`;
+
+        const checkShippingSql = `SELECT productid, productname, suppliername, productcompany, qty, mechanicname, description FROM shipping WHERE productid = ?`;
         db.query(checkShippingSql, [productid], (errCheck, shippingData) => {
           if (errCheck)
             return res.status(500).json({ success: false, message: "Failed to fetch updated shipping data" });
-  
+
           const updatedQty = shippingData[0].qty;
-  
+
           if (updatedQty < 5) {
-            // Check if reorder already exists
             db.query(`SELECT qty FROM reorder WHERE productid = ?`, [productid], (errExist, reorderResult) => {
               if (errExist)
                 return res.status(500).json({ success: false, message: "Failed to check reorder table" });
-  
+
+              const { productname, suppliername, productcompany, mechanicname, description } = shippingData[0];
+
               if (reorderResult.length > 0) {
-                // Update qty
                 db.query(
                   `UPDATE reorder SET qty = ? WHERE productid = ?`,
                   [updatedQty, productid],
@@ -92,11 +92,10 @@ const myorder = {
                   }
                 );
               } else {
-                // Insert new row
-                const { productname, suppliername, productcompany } = shippingData[0];
                 db.query(
-                  `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty) VALUES (?, ?, ?, ?, ?)`,
-                  [productid, productname, suppliername, productcompany, updatedQty],
+                  `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mechanicname, description)
+                   VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                  [productid, productname, suppliername, productcompany, updatedQty, mechanicname, description],
                   (errInsert) => {
                     if (errInsert)
                       return res.status(500).json({ success: false, message: "Failed to insert into reorder table" });
@@ -104,22 +103,23 @@ const myorder = {
                 );
               }
             });
-          } else {
+          }
+          else {
             // Remove from reorder table if qty >= 5
             db.query(`DELETE FROM reorder WHERE productid = ?`, [productid], (errDel) => {
               if (errDel)
                 return res.status(500).json({ success: false, message: "Failed to remove from reorder table" });
             });
           }
-  
+
           // Proceed with order deletion or update
           if (deleteQty === currentQty) {
             db.query(`DELETE FROM myorder WHERE productid = ? AND DATE(orderdate) = ?`, [productid, orderdate], (err1) => {
               if (err1) return res.status(500).json({ success: false, message: "Failed to delete from myorder" });
-  
+
               db.query(`DELETE FROM dailyprofit WHERE productid = ? AND DATE(orderdate) = ?`, [productid, orderdate], (err2) => {
                 if (err2) return res.status(500).json({ success: false, message: "Failed to delete from dailyprofit" });
-  
+
                 return res.json({ success: true, message: "Deleted entire order" });
               });
             });
@@ -130,28 +130,28 @@ const myorder = {
               [newQty, newSoldPrice, newPercentageAmount, productid, orderdate],
               (err3) => {
                 if (err3) return res.status(500).json({ success: false, message: "Failed to update myorder" });
-  
+
                 db.query(
                   `UPDATE dailyprofit SET qty = ?, soldprice = ? WHERE productid = ? AND DATE(orderdate) = ?`,
                   [newQty, newSoldPrice, productid, orderdate],
                   (err4) => {
                     if (err4) return res.status(500).json({ success: false, message: "Failed to update dailyprofit" });
-  
+
                     db.query(
                       `SELECT netrate, soldprice, qty FROM dailyprofit WHERE productid = ? AND DATE(orderdate) = ?`,
                       [productid, orderdate],
                       (err5, profitResults) => {
                         if (err5) return res.status(500).json({ success: false, message: "Failed to fetch dailyprofit" });
-  
+
                         const { netrate, soldprice, qty } = profitResults[0];
                         const profit = ((soldprice / qty) - netrate) * qty;
-  
+
                         db.query(
                           `UPDATE dailyprofit SET profit = ? WHERE productid = ? AND DATE(orderdate) = ?`,
                           [profit, productid, orderdate],
                           (err6) => {
                             if (err6) return res.status(500).json({ success: false, message: "Failed to update profit" });
-  
+
                             return res.json({ success: true, message: "Partial quantity deleted and profit updated" });
                           }
                         );
@@ -165,7 +165,7 @@ const myorder = {
         });
       });
     });
-  },  
+  },
 
 
 

@@ -15,11 +15,11 @@ const shippping = {
       qty,
       mrp,
     } = req.body;
-  
+
     if (!productid || !qty) {
       return res.status(400).json({ error: "Product ID and quantity are required" });
     }
-  
+
     const insertSql = `
       INSERT INTO shipping
         (entrydate, productid, productname, mechanicname, suppliername, description, productcompany, netrate, qty, mrp)
@@ -35,7 +35,7 @@ const shippping = {
         mrp = VALUES(mrp),
         entrydate = CURDATE()
     `;
-  
+
     const values = [
       productid,
       productname,
@@ -47,70 +47,73 @@ const shippping = {
       qty,
       mrp,
     ];
-  
+
     try {
       await db.promise().query(insertSql, values);
-  
-      // ✅ Always fetch full updated row after insertion
+
       const [productRows] = await db.promise().query(
-        `SELECT productid, productname, suppliername, productcompany, qty, mrp FROM shipping WHERE productid = ?`,
+        `SELECT productid, productname, suppliername, productcompany, qty, mrp, mechanicname, description FROM shipping WHERE productid = ?`,
         [productid]
       );
-  
+
       const product = productRows[0];
       if (!product) {
         return res.status(500).json({ error: "Product not found after insertion" });
       }
-  
+
       const updatedQty = parseFloat(product.qty) || 0;
       const updatedMrp = parseFloat(product.mrp);
-  
+
       console.log(`📦 Product ${productid} has updated qty: ${updatedQty}, mrp: ${updatedMrp}`);
-  
+
       if (updatedQty < 5) {
         if (!updatedMrp || isNaN(updatedMrp)) {
           console.error("❌ MRP is missing or invalid, cannot insert into reorder.");
           return res.status(500).json({ error: "MRP missing, cannot insert into reorder" });
         }
-  
-        // Check reorder table
+
         const [reorderRows] = await db.promise().query(
           `SELECT * FROM reorder WHERE productid = ?`,
           [productid]
         );
-  
+
         if (reorderRows.length > 0) {
-          // Update existing reorder record
           await db.promise().query(
             `UPDATE reorder SET qty = ?, mrp = ? WHERE productid = ?`,
             [updatedQty, updatedMrp, productid]
           );
           return res.json({ success: true, message: "Product updated & reorder record updated." });
         } else {
-          // Insert new reorder record
           await db.promise().query(
-            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp)
-             VALUES (?, ?, ?, ?, ?, ?)`,
-            [product.productid, product.productname, product.suppliername, product.productcompany, updatedQty, updatedMrp]
+            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp, mechanicname, description)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+              product.productid,
+              product.productname,
+              product.suppliername,
+              product.productcompany,
+              updatedQty,
+              updatedMrp,
+              product.mechanicname,
+              product.description
+            ]
           );
           return res.json({ success: true, message: "Product updated & reorder record inserted." });
         }
       } else if (updatedQty > 5) {
-        // ✅ If qty > 5 → remove from reorder
         await db.promise().query(
           `DELETE FROM reorder WHERE productid = ?`,
           [productid]
         );
         return res.json({ success: true, message: "Product updated & removed from reorder if existed." });
       } else {
-        // qty == 5, no reorder action
         return res.json({ success: true, message: "Product updated, no reorder action for qty 5." });
       }
     } catch (err) {
       console.error("Insert/Update Error:", err);
       return res.status(500).json({ error: "Database operation failed" });
     }
-  },    
+  },
 
   getProductById: (req, res) => {
     const { productid } = req.params;
@@ -223,6 +226,36 @@ const shippping = {
       `;
 
       await db.promise().query(updateSql, [updatedMechanicName, updatedDescription, updatedQty, productid]);
+
+      // After updating shipping, update reorder table accordingly
+      if (updatedQty < 5) {
+        // Check reorder table
+        const [reorderRows] = await db.promise().query(
+          `SELECT * FROM reorder WHERE productid = ?`,
+          [productid]
+        );
+
+        if (reorderRows.length > 0) {
+          // Update existing reorder record with mechanicname and description
+          await db.promise().query(
+            `UPDATE reorder SET qty = ?, mrp = ?, mechanicname = ?, description = ? WHERE productid = ?`,
+            [updatedQty, existingProduct.mrp, updatedMechanicName, updatedDescription, productid]
+          );
+        } else {
+          // Insert new reorder record with mechanicname and description
+          await db.promise().query(
+            `INSERT INTO reorder (productid, productname, suppliername, productcompany, qty, mrp, mechanicname, description)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [existingProduct.productid, existingProduct.productname, existingProduct.suppliername, existingProduct.productcompany, updatedQty, existingProduct.mrp, updatedMechanicName, updatedDescription]
+          );
+        }
+      } else if (updatedQty > 5) {
+        // Remove from reorder if qty > 5
+        await db.promise().query(
+          `DELETE FROM reorder WHERE productid = ?`,
+          [productid]
+        );
+      }
 
       return res.json({ success: true, message: "Product updated successfully" });
     } catch (error) {

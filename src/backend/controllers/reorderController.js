@@ -4,8 +4,8 @@ const db = require("../config/database");
 const reorderController = {
 
     getSupplierNames: (req, res) => {
-        const sql = `SELECT DISTINCT suppliername FROM reorder`;
-        db.query(sql, (err, results) => {
+          const sql = `SELECT DISTINCT suppliername FROM reorder`;
+          db.query(sql, (err, results) => {
             if (err) {
                 console.error("Supplier fetch error:", err);
                 return res.status(500).json({ success: false, message: "Database error" });
@@ -23,7 +23,7 @@ const reorderController = {
         }
 
         const sql = `
-          SELECT productid, productname, suppliername, productcompany, qty, mrp
+          SELECT productid, productname, suppliername, productcompany, qty, mrp, mechanicname, description
           FROM reorder
           WHERE suppliername = ?
         `;
